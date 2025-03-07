@@ -35,7 +35,7 @@ PID=$(cat /tmp/sleeper.pid)
 echo Running ./nfs-mount-in-userns
 PID_TO_JOIN=$PID
 strace -f -s 64 -e fsopen,fsconfig,fsmount,move_mount,mount \
-./nfs-mount-in-userns /proc/$PID_TO_JOIN/ns/net /proc/$PID_TO_JOIN/ns/user /proc/$PID_TO_JOIN/ns/mnt
+./nfs-mount-in-userns /proc/$PID_TO_JOIN/ns/net /proc/$PID_TO_JOIN/ns/user /proc/$PID_TO_JOIN/ns/mnt 127.0.0.1:/server /mnt/nfs
 echo "./nfs-mount-in-userns returned $?"
 
 echo "last dmesg line about nfs4_create_server"

@@ -25,6 +25,12 @@ This results in a NFS mount on host mount namespace but with a
 [struct fs_context](https://github.com/torvalds/linux/blob/v5.6/include/linux/fs_context.h#L97-L98)
 configured with a different user and network namespaces.
 
+## Usage
+
+```
+./nfs-mount-in-userns /proc/PID/ns/net /proc/PID/ns/user /proc/PID/ns/mnt <nfs_server_path> <mountpoint>
+```
+
 ## Output
 
 ```

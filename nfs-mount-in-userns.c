@@ -237,7 +237,7 @@ get_sfd(char *netns_path, char *userns_path, char *mntns_path) {
 }
 
 void
-finish_mount(int sfd) {
+finish_mount(int sfd, const char *nfs_server_path, const char *mountpoint) {
 	int ret;
 	int mfd;
 
@@ -247,7 +247,7 @@ finish_mount(int sfd) {
 	//if (ret == -1) mount_error(sfd, "ro");
 	//assert(ret == 0);
 
-	ret = fsconfig(sfd, FSCONFIG_SET_STRING, "source", "127.0.0.1:/server", 0);
+	ret = fsconfig(sfd, FSCONFIG_SET_STRING, "source", nfs_server_path, 0);
 	if (ret == -1) mount_error(sfd, "source");
 	assert(ret == 0);
 
@@ -294,15 +294,15 @@ finish_mount(int sfd) {
 	ret = close (sfd);
 	assert(ret == 0);
 
-	ret = move_mount(mfd, "", AT_FDCWD, "/mnt/nfs", MOVE_MOUNT_F_EMPTY_PATH);
+	ret = move_mount(mfd, "", AT_FDCWD, mountpoint, MOVE_MOUNT_F_EMPTY_PATH);
 	assert(ret == 0);
 
 }
 
 int
 main(int argc, char **argv) {
-	if (argc < 4) {
-		fprintf(stderr, "%s /proc/PID/ns/net /proc/PID/ns/user /proc/PID/ns/mnt\n", argv[0]);
+	if (argc < 6) {
+		fprintf(stderr, "%s /proc/PID/ns/net /proc/PID/ns/user /proc/PID/ns/mnt <nfs_server_path> <mountpoint>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -311,7 +311,6 @@ main(int argc, char **argv) {
 	sfd = get_sfd(argv[1], argv[2], argv[3]);
 	assert(sfd >= 0);
 
-	finish_mount(sfd);
+	finish_mount(sfd, argv[4], argv[5]);
 	return 0;
 }
-
